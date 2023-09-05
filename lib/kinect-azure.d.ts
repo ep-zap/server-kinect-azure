@@ -216,71 +216,71 @@ declare module "kinect-azure" {
 
 		static K4ABT_BODY_INDEX_MAP_BACKGROUND: number;
 
-		static K4ABT_JOINT_ANKLE_LEFT: number;
+		// static K4ABT_JOINT_ANKLE_LEFT: number;
 
-		static K4ABT_JOINT_ANKLE_RIGHT: number;
+		// static K4ABT_JOINT_ANKLE_RIGHT: number;
 
-		static K4ABT_JOINT_CLAVICLE_LEFT: number;
+		// static K4ABT_JOINT_CLAVICLE_LEFT: number;
 
-		static K4ABT_JOINT_CLAVICLE_RIGHT: number;
+		// static K4ABT_JOINT_CLAVICLE_RIGHT: number;
 
-		static K4ABT_JOINT_COUNT: number;
+		// static K4ABT_JOINT_COUNT: number;
 
-		static K4ABT_JOINT_EAR_LEFT: number;
+		// static K4ABT_JOINT_EAR_LEFT: number;
 
-		static K4ABT_JOINT_EAR_RIGHT: number;
+		// static K4ABT_JOINT_EAR_RIGHT: number;
 
-		static K4ABT_JOINT_ELBOW_LEFT: number;
+		// static K4ABT_JOINT_ELBOW_LEFT: number;
 
-		static K4ABT_JOINT_ELBOW_RIGHT: number;
+		// static K4ABT_JOINT_ELBOW_RIGHT: number;
 
-		static K4ABT_JOINT_EYE_LEFT: number;
+		// static K4ABT_JOINT_EYE_LEFT: number;
 
-		static K4ABT_JOINT_EYE_RIGHT: number;
+		// static K4ABT_JOINT_EYE_RIGHT: number;
 
-		static K4ABT_JOINT_FOOT_LEFT: number;
+		// static K4ABT_JOINT_FOOT_LEFT: number;
 
-		static K4ABT_JOINT_FOOT_RIGHT: number;
+		// static K4ABT_JOINT_FOOT_RIGHT: number;
 
-		static K4ABT_JOINT_HANDTIP_LEFT: number;
+		// static K4ABT_JOINT_HANDTIP_LEFT: number;
 
-		static K4ABT_JOINT_HANDTIP_RIGHT: number;
+		// static K4ABT_JOINT_HANDTIP_RIGHT: number;
 
-		static K4ABT_JOINT_HAND_LEFT: number;
+		// static K4ABT_JOINT_HAND_LEFT: number;
 
-		static K4ABT_JOINT_HAND_RIGHT: number;
+		// static K4ABT_JOINT_HAND_RIGHT: number;
 
-		static K4ABT_JOINT_HEAD: number;
+		// static K4ABT_JOINT_HEAD: number;
 
-		static K4ABT_JOINT_HIP_LEFT: number;
+		// static K4ABT_JOINT_HIP_LEFT: number;
 
-		static K4ABT_JOINT_HIP_RIGHT: number;
+		// static K4ABT_JOINT_HIP_RIGHT: number;
 
-		static K4ABT_JOINT_KNEE_LEFT: number;
+		// static K4ABT_JOINT_KNEE_LEFT: number;
 
-		static K4ABT_JOINT_KNEE_RIGHT: number;
+		// static K4ABT_JOINT_KNEE_RIGHT: number;
 
-		static K4ABT_JOINT_NECK: number;
+		// static K4ABT_JOINT_NECK: number;
 
-		static K4ABT_JOINT_NOSE: number;
+		// static K4ABT_JOINT_NOSE: number;
 
-		static K4ABT_JOINT_PELVIS: number;
+		// static K4ABT_JOINT_PELVIS: number;
 
-		static K4ABT_JOINT_SHOULDER_LEFT: number;
+		// static K4ABT_JOINT_SHOULDER_LEFT: number;
 
-		static K4ABT_JOINT_SHOULDER_RIGHT: number;
+		// static K4ABT_JOINT_SHOULDER_RIGHT: number;
 
-		static K4ABT_JOINT_SPINE_CHEST: number;
+		// static K4ABT_JOINT_SPINE_CHEST: number;
 
-		static K4ABT_JOINT_SPINE_NAVEL: number;
+		// static K4ABT_JOINT_SPINE_NAVEL: number;
 
-		static K4ABT_JOINT_THUMB_LEFT: number;
+		// static K4ABT_JOINT_THUMB_LEFT: number;
 
-		static K4ABT_JOINT_THUMB_RIGHT: number;
+		// static K4ABT_JOINT_THUMB_RIGHT: number;
 
-		static K4ABT_JOINT_WRIST_LEFT: number;
+		// static K4ABT_JOINT_WRIST_LEFT: number;
 
-		static K4ABT_JOINT_WRIST_RIGHT: number;
+		// static K4ABT_JOINT_WRIST_RIGHT: number;
 
 		static K4ABT_SENSOR_ORIENTATION_CLOCKWISE90: number;
 

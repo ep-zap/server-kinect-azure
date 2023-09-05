@@ -9,7 +9,7 @@ ipcRenderer.on('close-kinect', (event, message) => {
     }).catch(e => {
       console.error(e);
     }).then(() => {
-      window.kinect.destroyTracker();
+      // window.kinect.destroyTracker();
       window.kinect.stopCameras();
       window.kinect.close();
       event.sender.send('kinect closed');

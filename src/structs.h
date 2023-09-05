@@ -24,58 +24,6 @@ typedef struct _JSImageFrame
 	}
 } JSImageFrame;
 
-#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-typedef struct _JSJoint
-{
-	int index = 0;
-	
-	float cameraX = 0;
-	float cameraY = 0;
-	float cameraZ = 0;
-	//
-	float orientationX = 0;
-	float orientationY = 0;
-	float orientationZ = 0;
-	float orientationW = 0;
-	//
-	float colorX = 0;
-	float colorY = 0;
-	//
-	float depthX = 0;
-	float depthY = 0;
-	//
-	int confidence = 0;
-} JSJoint;
-
-typedef struct _JSSkeleton
-{
-	JSJoint joints[K4ABT_JOINT_COUNT];
-} JSSkeleton;
-
-typedef struct _JSBody
-{
-	int id = 0;
-  JSSkeleton skeleton;
-} JSBody;
-
-typedef struct _JSBodyFrame
-{
-	JSImageFrame bodyIndexMapImageFrame;
-	JSImageFrame bodyIndexMapToColorImageFrame;
-	JSBody* bodies = NULL;
-  int numBodies = 0;
-	void reset() {
-		bodyIndexMapImageFrame.reset();
-		bodyIndexMapToColorImageFrame.reset();
-		if (bodies != NULL) {
-			delete [] bodies;
-			bodies = NULL;
-		}
-		numBodies = 0;
-	}
-} JSBodyFrame;
-#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
-
 typedef struct _JSIMUSample
 {
 	float temperature = 0.0;
@@ -103,9 +51,9 @@ typedef struct _JSIMUSample
 typedef struct _JSFrame
 {
 	JSIMUSample imuSample;
-	#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-	JSBodyFrame bodyFrame;
-	#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
+	// #ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
+	// JSBodyFrame bodyFrame;
+	// #endif // KINECT_AZURE_ENABLE_BODY_TRACKING
 	JSImageFrame colorImageFrame;
 	JSImageFrame depthImageFrame;
 	JSImageFrame irImageFrame;
@@ -120,9 +68,9 @@ typedef struct _JSFrame
 		colorToDepthImageFrame.reset();
 	}
 	void resetBodyFrame() {
-		#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-		bodyFrame.reset();
-		#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
+		// #ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
+		// bodyFrame.reset();
+		// #endif // KINECT_AZURE_ENABLE_BODY_TRACKING
 	}
 } JSFrame;
 

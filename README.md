@@ -8,6 +8,8 @@ This library enables you to use the Azure Kinect in your nodejs or electron apps
 
 ![screenshot of skeleton 2d demo](examples/screenshots/screenshot-demos-body-tracking-2d.png)
 
+Electric Playhouse mod - removing all skeleton/body tracking features (-SS, September 2023)
+
 Features:
 
 - get rgb camera feed
@@ -15,19 +17,16 @@ Features:
 - get ir feed
 - transform between color and depth feed
 - point cloud (greyscale and colored)
-- get skeleton joints (2d and 3d)
-- body index / user masking
 - get temperature / accelerometer / gyroscope data (IMU data)
 
-Check out [my kinect2 library](https://github.com/wouterverweirder/kinect2) for the Kinect v2 sensor.
+Check out wouterweirder's [kinect2 library](https://github.com/wouterverweirder/kinect2) for the Kinect v2 sensor.
 
 ## Installation
 
-Make sure you have the Azure Kinect drivers and the [Azure Kinect Body SDK](https://docs.microsoft.com/en-us/azure/kinect-dk/body-sdk-download) installed.
+Make sure you have the Azure Kinect drivers installed.
 
 The current version of this library links to:
 - Azure Kinect Sensor SDK v1.4.1
-- Azure Kinect Body Tracking SDK v1.1.0
 
 On Windows, The Body Tracking SDK relies on quite a few dll & onnx files, which you can find in the `Azure Kinect Body SDK\tools` directory. Either add that folder (eg C:\Program Files\Azure Kinect Body Tracking SDK\tools) to your PATH or copy the dll and onnx files into the root of your project.
 

@@ -1,4 +1,3 @@
-#define KINECT_AZURE_ENABLE_BODY_TRACKING = 1
 
 #include <thread>
 #include <mutex>
@@ -7,9 +6,6 @@
 #include <malloc.h>
 #include <k4a/k4a.h>
 #include <k4arecord/playback.h>
-#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-#include <k4abt.h>
-#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
 #include "structs.h"
 #include <chrono>
 #include <math.h>
@@ -21,10 +17,6 @@ k4a_device_configuration_t g_deviceConfig = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
 CustomDeviceConfig g_customDeviceConfig;
 k4a_calibration_t g_calibration;
 k4a_transformation_t transformer = NULL;
-
-#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-k4abt_tracker_t g_tracker = NULL;
-#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
 
 //Napi::FunctionReference g_emit;
 std::thread nativeThread;
@@ -448,56 +440,6 @@ Napi::Value MethodStopCameras(const Napi::CallbackInfo &info)
   return Napi::Boolean::New(env, true);
 }
 
-#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-Napi::Value MethodCreateTracker(const Napi::CallbackInfo &info)
-{
-  Napi::Env env = info.Env();
-  k4a_calibration_t sensor_calibration;
-  k4a_device_get_calibration(g_device, g_deviceConfig.depth_mode, g_deviceConfig.color_resolution, &sensor_calibration);
-  k4abt_tracker_configuration_t tracker_config = K4ABT_TRACKER_CONFIG_DEFAULT;
-
-  if (info.Length() > 0) {
-      Napi::Object js_config =  info[0].As<Napi::Object>();
-      Napi::Value js_sensor_orientation = js_config.Get("sensor_orientation");
-      if (js_sensor_orientation.IsNumber())
-      {
-        tracker_config.sensor_orientation = (k4abt_sensor_orientation_t) js_sensor_orientation.As<Napi::Number>().Int32Value();
-      }
-      Napi::Value js_processing_mode = js_config.Get("processing_mode");
-      if (js_processing_mode.IsNumber())
-      {
-        tracker_config.processing_mode = (k4abt_tracker_processing_mode_t) js_processing_mode.As<Napi::Number>().Int32Value();
-      }
-      Napi::Value js_gpu_device_id = js_config.Get("gpu_device_id");
-      if (js_gpu_device_id.IsNumber())
-      {
-        tracker_config.gpu_device_id = (int32_t) js_gpu_device_id.As<Napi::Number>().Int32Value();
-      }
-      Napi::Value js_model_path = js_config.Get("model_path");
-      if (js_model_path.IsString())
-      {
-        tracker_config.model_path = js_model_path.As<Napi::String>().Utf8Value().c_str();
-      }
-  }
-
-  k4abt_tracker_create(&sensor_calibration, tracker_config, &g_tracker);
-  return Napi::Boolean::New(env, true);
-}
-
-Napi::Value MethodDestroyTracker(const Napi::CallbackInfo &info)
-{
-  Napi::Env env = info.Env();
-  // printf("[kinect_azure.cc] MethodDestroyTracker\n");
-  if (g_tracker != NULL)
-  {
-    k4abt_tracker_shutdown(g_tracker);
-    k4abt_tracker_destroy(g_tracker);
-  }
-  g_tracker = NULL;
-  return Napi::Boolean::New(env, true);
-}
-#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
-
 Napi::Value MethodSetColorControl(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
@@ -658,72 +600,7 @@ Napi::Value MethodStartListening(const Napi::CallbackInfo &info)
         data.Set(Napi::String::New(env, "colorToDepthImageFrame"), colorToDepthImageFrame);
       }
       {
-#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-        Napi::Object bodyFrame = Napi::Object::New(env);
-        {
-          {
-            Napi::Object bodyIndexMapImageFrame = Napi::Object::New(env);
-            Napi::Buffer<uint8_t> imageData = Napi::Buffer<uint8_t>::New(env, jsFrame.bodyFrame.bodyIndexMapImageFrame.image_data, jsFrame.bodyFrame.bodyIndexMapImageFrame.image_length);
-            bodyIndexMapImageFrame.Set(Napi::String::New(env, "imageData"), imageData);
-            bodyIndexMapImageFrame.Set(Napi::String::New(env, "imageLength"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapImageFrame.image_length));
-            bodyIndexMapImageFrame.Set(Napi::String::New(env, "width"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapImageFrame.width));
-            bodyIndexMapImageFrame.Set(Napi::String::New(env, "height"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapImageFrame.height));
-            bodyIndexMapImageFrame.Set(Napi::String::New(env, "strideBytes"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapImageFrame.stride_bytes));
-            bodyFrame.Set(Napi::String::New(env, "bodyIndexMapImageFrame"), bodyIndexMapImageFrame);
-          }
-          {
-            Napi::Object bodyIndexMapToColorImageFrame = Napi::Object::New(env);
-            Napi::Buffer<uint8_t> imageData = Napi::Buffer<uint8_t>::New(env, jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_data, jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_length);
-            bodyIndexMapToColorImageFrame.Set(Napi::String::New(env, "imageData"), imageData);
-            bodyIndexMapToColorImageFrame.Set(Napi::String::New(env, "imageLength"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_length));
-            bodyIndexMapToColorImageFrame.Set(Napi::String::New(env, "width"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.width));
-            bodyIndexMapToColorImageFrame.Set(Napi::String::New(env, "height"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.height));
-            bodyIndexMapToColorImageFrame.Set(Napi::String::New(env, "strideBytes"), Napi::Number::New(env, jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.stride_bytes));
-            bodyFrame.Set(Napi::String::New(env, "bodyIndexMapToColorImageFrame"), bodyIndexMapToColorImageFrame);
-          }
-          bodyFrame.Set(Napi::String::New(env, "numBodies"), Napi::Number::New(env, jsFrame.bodyFrame.numBodies));
-          Napi::Array bodies = Napi::Array::New(env, jsFrame.bodyFrame.numBodies);
-          for (size_t i = 0; i < jsFrame.bodyFrame.numBodies; i++)
-          {
-            Napi::Object body = Napi::Object::New(env);
-            body.Set(Napi::String::New(env, "id"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].id));
-            Napi::Object skeleton = Napi::Object::New(env);
-            {
-              Napi::Array joints = Napi::Array::New(env, K4ABT_JOINT_COUNT);
-              for (size_t j = 0; j < K4ABT_JOINT_COUNT; j++)
-              {
-                Napi::Object joint = Napi::Object::New(env);
 
-                joint.Set(Napi::String::New(env, "index"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].index));
-
-                joint.Set(Napi::String::New(env, "cameraX"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].cameraX));
-                joint.Set(Napi::String::New(env, "cameraY"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].cameraY));
-                joint.Set(Napi::String::New(env, "cameraZ"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].cameraZ));
-
-                joint.Set(Napi::String::New(env, "orientationX"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationX));
-                joint.Set(Napi::String::New(env, "orientationY"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationY));
-                joint.Set(Napi::String::New(env, "orientationZ"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationZ));
-                joint.Set(Napi::String::New(env, "orientationW"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationW));
-
-                joint.Set(Napi::String::New(env, "colorX"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].colorX));
-                joint.Set(Napi::String::New(env, "colorY"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].colorY));
-
-                joint.Set(Napi::String::New(env, "depthX"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].depthX));
-                joint.Set(Napi::String::New(env, "depthY"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].depthY));
-
-                joint.Set(Napi::String::New(env, "confidence"), Napi::Number::New(env, jsFrame.bodyFrame.bodies[i].skeleton.joints[j].confidence));
-
-                joints.Set(Napi::Number::New(env, j), joint);
-              }
-              skeleton.Set(Napi::String::New(env, "joints"), joints);
-            }
-            body.Set(Napi::String::New(env, "skeleton"), skeleton);
-            bodies.Set(Napi::Number::New(env, i), body);
-          }
-          bodyFrame.Set(Napi::String::New(env, "bodies"), bodies);
-        }
-        data.Set(Napi::String::New(env, "bodyFrame"), bodyFrame);
-#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
       }
 
       // printf("[kinect_azure.cc] jsCallback.Call\n");
@@ -1010,149 +887,7 @@ Napi::Value MethodStartListening(const Napi::CallbackInfo &info)
         memcpy(jsFrame.colorToDepthImageFrame.image_data, image_data, jsFrame.colorToDepthImageFrame.image_length);
       }
 
-#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-      // printf("[kinect_azure.cc] check tracker\n");
-      if (g_tracker != NULL)
-      {
-        // printf("[kinect_azure.cc] k4abt_tracker_enqueue_capture\n");
-        k4a_wait_result_t queue_capture_result = k4abt_tracker_enqueue_capture(g_tracker, sensor_capture, 0);
-        if (queue_capture_result == K4A_WAIT_RESULT_FAILED)
-        {
-          k4a_capture_release(sensor_capture);
-          mtx.unlock();
-          break;
-        }
 
-        k4abt_frame_t body_frame = NULL;
-        k4a_wait_result_t pop_frame_result = k4abt_tracker_pop_result(g_tracker, &body_frame, 0);
-        if (pop_frame_result == K4A_WAIT_RESULT_SUCCEEDED)
-        {
-          // Successfully popped the body tracking result. Start your processing
-          size_t num_bodies = k4abt_frame_get_num_bodies(body_frame);
-
-          jsFrame.resetBodyFrame();
-
-          // body index map?
-          k4a_image_t body_index_map_image = NULL;
-          k4a_image_t body_index_map_color_image = NULL;
-          if (g_customDeviceConfig.include_body_index_map)
-          {
-            body_index_map_image = k4abt_frame_get_body_index_map(body_frame);
-            if (body_index_map_image != NULL)
-            {
-              jsFrame.bodyFrame.bodyIndexMapImageFrame.image_length = k4a_image_get_size(body_index_map_image);
-              jsFrame.bodyFrame.bodyIndexMapImageFrame.width = k4a_image_get_width_pixels(body_index_map_image);
-              jsFrame.bodyFrame.bodyIndexMapImageFrame.height = k4a_image_get_height_pixels(body_index_map_image);
-              jsFrame.bodyFrame.bodyIndexMapImageFrame.stride_bytes = k4a_image_get_stride_bytes(body_index_map_image);
-              jsFrame.bodyFrame.bodyIndexMapImageFrame.image_data = new uint8_t[jsFrame.bodyFrame.bodyIndexMapImageFrame.image_length];
-              uint8_t *image_data = k4a_image_get_buffer(body_index_map_image);
-              memcpy(jsFrame.bodyFrame.bodyIndexMapImageFrame.image_data, image_data, jsFrame.bodyFrame.bodyIndexMapImageFrame.image_length);
-            }
-            // transform to color space as well?
-            if (g_customDeviceConfig.include_depth_to_color)
-            {
-              if (
-                  k4a_image_create(
-                      K4A_IMAGE_FORMAT_CUSTOM8,
-                      jsFrame.colorImageFrame.width, jsFrame.colorImageFrame.height,
-                      jsFrame.colorImageFrame.width * (int)sizeof(uint8_t),
-                      &body_index_map_color_image) == K4A_RESULT_SUCCEEDED)
-              {
-                if (k4a_transformation_depth_image_to_color_camera_custom(transformer, depth_image, body_index_map_image, depth_to_color_image, body_index_map_color_image, K4A_TRANSFORMATION_INTERPOLATION_TYPE_NEAREST, K4ABT_BODY_INDEX_MAP_BACKGROUND) == K4A_RESULT_SUCCEEDED)
-                {
-                  jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_length = k4a_image_get_size(body_index_map_color_image);
-                  jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.width = k4a_image_get_width_pixels(body_index_map_color_image);
-                  jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.height = k4a_image_get_height_pixels(body_index_map_color_image);
-                  jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.stride_bytes = k4a_image_get_stride_bytes(body_index_map_color_image);
-                  jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_data = new uint8_t[jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_length];
-
-                  uint8_t *image_data = k4a_image_get_buffer(body_index_map_color_image);
-                  memcpy(jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_data, image_data, jsFrame.bodyFrame.bodyIndexMapToColorImageFrame.image_length);
-                }
-              }
-            }
-          }
-
-          jsFrame.bodyFrame.numBodies = num_bodies;
-          jsFrame.bodyFrame.bodies = new JSBody[num_bodies];
-
-          for (size_t i = 0; i < num_bodies; i++)
-          {
-            jsFrame.bodyFrame.bodies[i].id = k4abt_frame_get_body_id(body_frame, i);
-
-            k4abt_skeleton_t skeleton;
-            k4abt_frame_get_body_skeleton(body_frame, i, &skeleton);
-
-            for (int j = 0; j < K4ABT_JOINT_COUNT; j++)
-            {
-              k4abt_joint_t joint = skeleton.joints[j];
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].index = j;
-
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].cameraX = joint.position.xyz.x;
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].cameraY = joint.position.xyz.y;
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].cameraZ = joint.position.xyz.z;
-
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationX = joint.orientation.wxyz.x;
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationY = joint.orientation.wxyz.y;
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationZ = joint.orientation.wxyz.z;
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].orientationW = joint.orientation.wxyz.w;
-
-              k4a_float2_t point2d;
-              bool valid;
-              valid = transform_joint_from_depth_3d_to_2d(
-                  &g_calibration,
-                  skeleton.joints[j].position,
-                  point2d,
-                  K4A_CALIBRATION_TYPE_DEPTH);
-
-              if (valid)
-              {
-                jsFrame.bodyFrame.bodies[i].skeleton.joints[j].depthX = point2d.xy.x;
-                jsFrame.bodyFrame.bodies[i].skeleton.joints[j].depthY = point2d.xy.y;
-              }
-
-              if (g_deviceConfig.color_resolution != K4A_COLOR_RESOLUTION_OFF)
-              {
-                valid = transform_joint_from_depth_3d_to_2d(
-                    &g_calibration,
-                    skeleton.joints[j].position,
-                    point2d,
-                    K4A_CALIBRATION_TYPE_COLOR);
-
-                if (valid)
-                {
-                  jsFrame.bodyFrame.bodies[i].skeleton.joints[j].colorX = point2d.xy.x;
-                  jsFrame.bodyFrame.bodies[i].skeleton.joints[j].colorY = point2d.xy.y;
-                }
-              }
-
-              jsFrame.bodyFrame.bodies[i].skeleton.joints[j].confidence = joint.confidence_level;
-            }
-          }
-
-          if (body_index_map_image != NULL)
-          {
-            k4a_image_release(body_index_map_image);
-            body_index_map_image = NULL;
-          }
-
-          if (body_index_map_color_image != NULL)
-          {
-            k4a_image_release(body_index_map_color_image);
-            body_index_map_color_image = NULL;
-          }
-
-          if (body_index_map_color_image != NULL)
-          {
-            k4a_image_release(body_index_map_color_image);
-            body_index_map_color_image = NULL;
-          }
-
-          k4abt_frame_release(body_frame);
-          body_frame = NULL;
-        }
-      }
-#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
 
       // release images
       if (depth_image != NULL)
@@ -1285,10 +1020,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
   exports.Set(Napi::String::New(env, "close"), Napi::Function::New(env, MethodClose));
   exports.Set(Napi::String::New(env, "startCameras"), Napi::Function::New(env, MethodStartCameras));
   exports.Set(Napi::String::New(env, "stopCameras"), Napi::Function::New(env, MethodStopCameras));
-#ifdef KINECT_AZURE_ENABLE_BODY_TRACKING
-  exports.Set(Napi::String::New(env, "createTracker"), Napi::Function::New(env, MethodCreateTracker));
-  exports.Set(Napi::String::New(env, "destroyTracker"), Napi::Function::New(env, MethodDestroyTracker));
-#endif // KINECT_AZURE_ENABLE_BODY_TRACKING
   exports.Set(Napi::String::New(env, "setColorControl"), Napi::Function::New(env, MethodSetColorControl));
   exports.Set(Napi::String::New(env, "startListening"), Napi::Function::New(env, MethodStartListening));
   exports.Set(Napi::String::New(env, "stopListening"), Napi::Function::New(env, MethodStopListening));

@@ -10,16 +10,16 @@ const main = async () => {
       color_resolution: KinectAzure.K4A_COLOR_RESOLUTION_720P
     });
     console.log("cameras started");
-    kinect.createTracker();
-    console.log("tracker created");
+    // kinect.createTracker();
+    // console.log("tracker created");
     kinect.startListening((data) => {
     });
     console.log("started listening");
     // stop kinect - use the await keyword to wait for the promise to resolve
     await kinect.stopListening();
     console.log("stopped listening");
-    kinect.destroyTracker();
-    console.log("destroyed tracking");
+    // kinect.destroyTracker();
+    // console.log("destroyed tracking");
     kinect.stopCameras();
     console.log("stopped cameras");
     // start again
@@ -28,15 +28,15 @@ const main = async () => {
       color_resolution: KinectAzure.K4A_COLOR_RESOLUTION_720P
     });
     console.log("cameras started");
-    kinect.createTracker();
-    console.log("tracker created");
+    // kinect.createTracker();
+    // console.log("tracker created");
     kinect.startListening((data) => {
     });
     // you can also use the .then() method to wait for the stopListening() method to finish it's work
     kinect.stopListening().then(() => {
       console.log("stopped listening");
-      kinect.destroyTracker();
-      console.log("destroyed tracking");
+      // kinect.destroyTracker();
+      // console.log("destroyed tracking");
       kinect.stopCameras();
       console.log("stopped cameras");
       // start again
@@ -45,15 +45,15 @@ const main = async () => {
         color_resolution: KinectAzure.K4A_COLOR_RESOLUTION_720P
       });
       console.log("cameras started");
-      kinect.createTracker();
-      console.log("tracker created");
+      // kinect.createTracker();
+      // console.log("tracker created");
       kinect.startListening((data) => {
       });
       // or use an old-school callback to wait for the stopListening() method to finish it's work
       kinect.stopListening((err, result) => {
         console.log("stopped listening");
-        kinect.destroyTracker();
-        console.log("destroyed tracking");
+        // kinect.destroyTracker();
+        // console.log("destroyed tracking");
         kinect.stopCameras();
         console.log("stopped cameras");
         // start again
@@ -62,10 +62,10 @@ const main = async () => {
           color_resolution: KinectAzure.K4A_COLOR_RESOLUTION_720P
         });
         console.log("cameras started");
-        kinect.createTracker();
-        console.log("tracker created");
+        // kinect.createTracker();
+        // console.log("tracker created");
         kinect.startListening((data) => {
-          console.log("num bodies: " + data.bodyFrame.numBodies);
+          // console.log("num bodies: " + data.bodyFrame.numBodies);
         });
       });
     });
