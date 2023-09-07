@@ -1,14 +1,10 @@
-# Azure Kinect Library for Node / Electron
+# Electric Playhouse Azure Kinect Library for Node / Electron
 
-[![npm](https://img.shields.io/node/v/kinect-azure.svg)](https://nodejs.org/en/)
-[![npm](https://img.shields.io/npm/v/kinect-azure.svg)](https://npmjs.org/package/kinect-azure)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NUZP3U3QZEQV2&currency_code=EUR&source=url)
+This library enables you to use the Azure Kinect (without body tracking!) in your nodejs or electron apps.  It was specially designed to be used for Electric Playhouse Zap.
 
-This library enables you to use the Azure Kinect in your nodejs or electron apps on Windows and Linux.
+It is a fork of the existing library [Azure Kinect](https://github.com/wouterverweirder/kinect-azure) by Wouter Verweirder.
 
-![screenshot of skeleton 2d demo](examples/screenshots/screenshot-demos-body-tracking-2d.png)
-
-Electric Playhouse mod - removing all skeleton/body tracking features (-SS, September 2023)
+![screenshot of color control demo](examples/screenshots/screenshot-color-control-demo.png)
 
 Features:
 
@@ -17,30 +13,24 @@ Features:
 - get ir feed
 - transform between color and depth feed
 - point cloud (greyscale and colored)
+- body index / user masking
 - get temperature / accelerometer / gyroscope data (IMU data)
-
-Check out wouterweirder's [kinect2 library](https://github.com/wouterverweirder/kinect2) for the Kinect v2 sensor.
 
 ## Installation
 
-Make sure you have the Azure Kinect drivers installed.
+Make sure you have the [Azure Kinect](https://learn.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download) SDK installed.
 
 The current version of this library links to:
 - Azure Kinect Sensor SDK v1.4.1
 
-On Windows, The Body Tracking SDK relies on quite a few dll & onnx files, which you can find in the `Azure Kinect Body SDK\tools` directory. Either add that folder (eg C:\Program Files\Azure Kinect Body Tracking SDK\tools) to your PATH or copy the dll and onnx files into the root of your project.
+On Windows, the sdk relies on quite a few dll & onnx files, which you can find in the `Azure Kinect SDK\tools` directory. Add that folder (eg C:\Program Files\Azure Kinect SDK v1.4.1\tools) to your PATH before trying to run!
 
-Just npm install like you would do with any regular module. 
-
-```
-$ npm install kinect-azure
-```
 
 ### Potential issues
 
 #### Error: The specified module could not be found
 
-This module relies on some dll & onnx files from the kinect azure installation. If those files can't be loaded, loading the module will fail as well. You can can find those in the `Azure Kinect Body SDK\tools` directory. Either add that folder (eg C:\Program Files\Azure Kinect Body Tracking SDK\tools) to your PATH or copy the dll and onnx files into the root of your project.
+This module relies on some dll & onnx files from the kinect azure installation. If those files can't be loaded, loading the module will fail as well. You can can find those in the `Azure Kinect SDK\tools` directory. Add that folder (eg C:\Program Files\Azure Kinect SDK v1.4.1\tools) to your PATH.
 
 #### MSBuild.exe ENOENT
 
@@ -65,20 +55,3 @@ $ npm start
 ```
 
 The electron examples have the javascript code inside the html files. You can find these html files in [examples/electron/renderer/demos](examples/electron/renderer/demos).
-
-## Contributors ✨
-
-Special thank you to the following people for improving this library:
-
-- [Min Oh (오민석)](https://github.com/challenger71498)
-- [Chris Bright](https://github.com/Chrisbright10)
-- [Pete Shand](https://github.com/peteshand)
-- [Sir Fancy Walrus](https://github.com/SirFancyWalrus)
-- [Itok](https://github.com/ikenichiro)
-- [Steven Rick](https://github.com/stevenrick)
-
-## Donate
-
-Like this library? Always welcome to buy me a beer 🍺
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=NUZP3U3QZEQV2&currency_code=EUR&source=url)

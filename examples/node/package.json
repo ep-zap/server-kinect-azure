@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "skeleton-logging.js",
   "scripts": {
-    "start": "node .",
-    "copy-dlls": "xcopy \"C:\\Program Files\\Azure Kinect Body Tracking SDK\\tools\\\" . /H /C /Y"
+    "start": "node ."
   },
   "author": "Wouter Verweirder",
   "license": "MIT",
